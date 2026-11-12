@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>装箱计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .results {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .result-item {
+            text-align: center;
+            padding: 15px;
+            background: #ffffff;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .container-section {
+            margin-top: 30px;
+        }
+
+        .container-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .container-cbm {
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 15px 0 0 15px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar-20GP {
+            background: linear-gradient(90deg, #FF6B6B 0%, #EE5A24 100%);
+        }
+
+        .progress-bar-40GP {
+            background: linear-gradient(90deg, #4ECDC4 0%, #556270 100%);
+        }
+
+        .progress-bar-40HQ {
+            background: linear-gradient(90deg, #FFA500 0%, #FF634F 100%);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .remaining-space {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 30px;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .reset-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 20px;
+            }
+
+            .input-row {
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 装箱计算器</h1>
+        
+        <div class="form-group">
+            <label for="cartonLength">纸箱长度 (cm)</label>
+            <input type="number" id="cartonLength" placeholder="请输入长度" min="0" step="0.01">
+        </div>
+        
+        <div class="form-group">
+            <label for="cartonWidth">纸箱宽度 (cm)</label>
+            <input type="number" id="cartonWidth" placeholder="请输入宽度" min="0" step="0.01">
+        </div>
+        
+        <div class="form-group">
+            <label for="cartonHeight">纸箱高度 (cm)</label>
+            <input type="number" id="cartonHeight" placeholder="请输入高度" min="0" step="0.01">
+        </div>
+        
+        <div class="input-row">
+            <div class="form-group">
+                <label for="grossWeight">每箱毛重 (kg)</label>
+                <input type="number" id="grossWeight" placeholder="请输入重量" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="totalCartons">总箱数</label>
+                <input type="number" id="totalCartons" placeholder="请输入数量" min="0" step="1">
+            </div>
+        </div>
+        
+        <div class="results">
+            <div class="result-item">
+                <div class="result-label">单箱 CBM</div>
+                <div class="result-value" id="cbmPerCarton">0.000 m³</div>
+            </div>
+            
+            <div class="result-item">
+                <div class="result-label">总 CBM</div>
+                <div class="result-value" id="totalCBM">0.000 m³</div>
+            </div>
+            
+            <div class="result-item">
+                <div class="result-label">总毛重</div>
+                <div class="result-value" id="totalWeight">0.00 kg</div>
+            </div>
+        </div>
+        
+        <div class="container-section">
+            <h3 class="container-title">📤 集装箱容量对比</h3>
+            
+            <div class="container-cbm">
+                <span>20GP: <strong id="cbmPerCartonLabel">0.000 m³</strong></span>
+            </div>
+            
+            <div class="progress-container" id="progress20GP">
+                <div class="progress-bar progress-bar-20GP" style="width: 0%"></div>
+            </div>
+            <div class="progress-info">
+                <span>20GP 装载进度：0%</span>
+                <span>剩余空间：<span class="remaining-space" id="space20GP">28.000 m³</span></span>
+            </div>
+            
+            <div class="container-cbm">
+                <span>40GP: <strong id="cbmPerCartonLabel40GP">0.000 m³</strong></span>
+            </div>
+            
+            <div class="progress-container" id="progress40GP">
+                <div class="progress-bar progress-bar-40GP" style="width: 0%"></div>
+            </div>
+            <div class="progress-info">
+                <span>40GP 装载进度：0%</span>
+                <span>剩余空间：<span class="remaining-space" id="space40GP">58.000 m³</span></span>
+            </div>
+            
+            <div class="container-cbm">
+                <span>40HQ: <strong id="cbmPerCartonLabel40HQ">0.000 m³</strong></span>
+            </div>
+            
+            <div class="progress-container" id="progress40HQ">
+                <div class="progress-bar progress-bar-40HQ" style="width: 0%"></div>
+            </div>
+            <div class="progress-info">
+                <span>40HQ 装载进度：0%</span>
+                <span>剩余空间：<span class="remaining-space" id="space40HQ">68.000 m³</span></span>
+            </div>
+        </div>
+        
+        <button class="reset-btn" onclick="resetCalculator()">🔄 重置计算</button>
+    </div>
+
+    <script>
+        const containerCapacities = {
+            '20GP': 28,
+            '40GP': 58,
+            '40HQ': 68
+        };
+
+        const cartonLength = document.getElementById('cartonLength');
+        const cartonWidth = document.getElementById('cartonWidth');
+        const cartonHeight = document.getElementById('cartonHeight');
+        const grossWeight = document.getElementById('grossWeight');
+        const totalCartons = document.getElementById('totalCartons');
+
+        const cbmPerCartonDisplay = document.getElementById('cbmPerCarton');
+        const totalCBMDisplay = document.getElementById('totalCBM');
+        const totalWeightDisplay = document.getElementById('totalWeight');
+
+        const space20GP = document.getElementById('space20GP');
+        const space40GP = document.getElementById('space40GP');
+        const space40HQ = document.getElementById('space40HQ');
+
+        function calculate() {
+            const length = parseFloat(cartonLength.value) || 0;
+            const width = parseFloat(cartonWidth.value) || 0;
+            const height = parseFloat(cartonHeight.value) || 0;
+            const weightPerCarton = parseFloat(grossWeight.value) || 0;
+            const totalNum = parseInt(totalCartons.value) || 0;
+
+            const cbmPerCarton = (length * width * height) / 1000000;
+            const totalCBM = cbmPerCarton * totalNum;
+            const totalWeight = weightPerCarton * totalNum;
+
+            cbmPerCartonDisplay.textContent = cbmPerCarton.toFixed(3) + ' m³';
+            totalCBMDisplay.textContent = totalCBM.toFixed(3) + ' m³';
+            totalWeightDisplay.textContent = totalWeight.toFixed(2) + ' kg';
+
+            document.getElementById('cbmPerCartonLabel').textContent = cbmPerCarton.toFixed(3) + ' m³';
+            document.getElementById('cbmPerCartonLabel40GP').textContent = cbmPerCarton.toFixed(3) + ' m³';
+            document.getElementById('cbmPerCartonLabel40HQ').textContent = cbmPerCarton.toFixed(3) + ' m³';
+
+            updateProgress(containerCapacities['20GP'], totalCBM, space20GP);
+            updateProgress(containerCapacities['40GP'], totalCBM, space40GP);
+            updateProgress(containerCapacities['40HQ'], totalCBM, space40HQ);
+        }
+
+        function updateProgress(capacity, usedSpace, remainingElement) {
+            const percentage = Math.min(100, (usedSpace / capacity) * 100);
+            const remaining = Math.max(0, capacity - usedSpace);
+            
+            document.querySelector(`#${document.getElementById('progress20GP').id} .progress-bar`).style.width = percentage + '%';
+            remainingElement.textContent = remaining.toFixed(3) + ' m³';
+        }
+
+        function resetCalculator() {
+            cartonLength.value = '';
+            cartonWidth.value = '';
+            cartonHeight.value = '';
+            grossWeight.value = '';
+            totalCartons.value = '';
+
+            cbmPerCartonDisplay.textContent = '0.000 m³';
+            totalCBMDisplay.textContent = '0.000 m³';
+            totalWeightDisplay.textContent = '0.00 kg';
+
+            document.getElementById('cbmPerCartonLabel').textContent = '0.000 m³';
+            document.getElementById('cbmPerCartonLabel40GP').textContent = '0.000 m³';
+            document.getElementById('cbmPerCartonLabel40HQ').textContent = '0.000 m³';
+
+            updateProgress(containerCapacities['20GP'], 0, space20GP);
+            updateProgress(containerCapacities['40GP'], 0, space40GP);
+            updateProgress(containerCapacities['40HQ'], 0, space40HQ);
+        }
+
+        [cartonLength, cartonWidth, cartonHeight, grossWeight, totalCartons].forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        calculate();
+    </script>
+</body>
+</html>
